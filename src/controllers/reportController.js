@@ -5,6 +5,16 @@ exports.generateMonthlyReport = async (req, res) => {
         const { instructorId, month, year } = req.query;
         const startDate = new Date(year, month - 1, 1);
         const endDate = new Date(year, month, 0, 23, 59, 59);
+
+        const idExists = await Attendance.findOne({instructorId})
+
+        if(!idExists){
+            res.status(400).json({
+                status: 400,
+                error: "no such id exists"
+            })
+            return
+        }
         const totalCheckInTime = await Attendance.aggregate([
             {
                 $match: {
